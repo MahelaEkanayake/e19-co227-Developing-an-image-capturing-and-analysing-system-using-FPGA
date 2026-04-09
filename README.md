@@ -560,35 +560,45 @@ Switching to Gigabit Ethernet alone would reduce processing time from 44 seconds
 ## 13. Repository Structure
 
 ```
-├── rtl/                        # All synthesisable RTL source files
-│   ├── *.sv                    # SystemVerilog modules:
-│   │                           #   averaging_filter.sv  — addition tree filter
-│   │                           #   median_filter.sv     — bitonic sort filter
-│   │                           #   uart_to_axis.sv      — UART RX → AXIS converter
-│   │                           #   axis_to_uart.sv      — AXIS → UART TX converter
-│   │                           #   skid_buffer.sv       — AXI backpressure buffer
-│   └── *.v                     # Verilog top-level wrapper (fpga_module.v)
+├── rtl/
+│   ├── averaging_filter_system/
+│   │   ├── averaging_filter.sv               # Addition tree averaging filter core
+│   │   ├── axis_averaging_filter.v           # AXIS wrapper for averaging filter
+│   │   ├── axis_averaging_filter_uart_system.v  # Top-level: UART↔AXIS↔filter system
+│   │   ├── fpga_module.sv                    # FPGA top-level module
+│   │   ├── skid_buffer.sv                    # AXI backpressure skid buffer
+│   │   ├── uart_rx.sv                        # UART receiver (UART→AXIS)
+│   │   └── uart_tx.sv                        # UART transmitter (AXIS→UART)
+│   │
+│   └── median_filter_system/
+│       ├── axis_median_filter.v              # AXIS wrapper for median filter
+│       ├── axis_median_filter_uart_system.v  # Top-level: UART↔AXIS↔filter system
+│       ├── fpga_module.sv                    # FPGA top-level module
+│       ├── median_filter.sv                  # Bitonic sort median filter core
+│       ├── skid_buffer.sv                    # AXI backpressure skid buffer
+│       ├── uart_rx.sv                        # UART receiver (UART→AXIS)
+│       └── uart_tx.sv                        # UART transmitter (AXIS→UART)
 │
-├── tb/                         # ModelSim simulation testbenches
-│   └── *.sv                    # Self-checking testbenches per module
+├── tb/
+│   ├── averaging_filter_system/
+│   │   ├── averaging_filter_tb.sv            # Averaging filter core testbench
+│   │   ├── axis_averaging_filter_tb.sv       # AXIS wrapper testbench
+│   │   ├── axis_averaging_filter_uart_system_tb.sv  # Full system testbench
+│   │   ├── uart_rx_tb.sv                     # UART RX testbench
+│   │   └── uart_tx_tb.sv                     # UART TX testbench
+│   │
+│   └── median_filter_system/
+│       ├── axis_median_filter_tb.sv          # AXIS wrapper testbench
+│       ├── axis_median_filter_uart_system_tb.sv     # Full system testbench
+│       ├── median_filter_tb.sv               # Median filter core testbench
+│       ├── uart_rx_tb.sv                     # UART RX testbench
+│       └── uart_tx_tb.sv                     # UART TX testbench
 │
-├── scripts/                    # Host-side Python
-│   └── *.py                    # Image send/receive/reconstruct script
+├── scripts/
+│   └── script.py                             # Image send/receive/reconstruct host script
 │
 ├── docs/
-│   └── images/                 # All figures embedded in this README
-│       ├── waveform_median_1.png       # Median filter ModelSim waveform (view 1)
-│       ├── waveform_median_2.png       # Median filter ModelSim waveform (view 2)
-│       ├── waveform_averaging_1.png    # Averaging filter ModelSim waveform (view 1)
-│       ├── waveform_averaging_2.png    # Averaging filter ModelSim waveform (view 2)
-│       ├── fsm_skid_buffer.png         # Skid buffer state machine diagram
-│       ├── fsm_uart_to_axis.png        # UART→AXIS converter FSM
-│       ├── fsm_axis_to_uart.png        # AXIS→UART converter FSM
-│       ├── fpga_design_flow.png        # RTL→bitstream design flow chart
-│       ├── gpio_pinout.png             # DE2-115 GPIO header pinout
-│       ├── result_input_noisy.png      # Test input image (salt & pepper noise)
-│       ├── result_median_output.png    # Median filter output
-│       └── result_averaging_output.png # Averaging filter output
+│   └── images/                               # Figures embedded in this README
 │
 └── README.md
 ```
